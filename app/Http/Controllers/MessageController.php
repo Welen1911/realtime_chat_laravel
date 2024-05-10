@@ -3,16 +3,37 @@
 namespace App\Http\Controllers;
 
 use App\Models\Message;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MessageController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(string $userId)
     {
-        //
+        $userTo = User::find($userId);
+        $userFrom = auth()->user();
+
+        $messages = Message::where(
+            function ($query) use ($userFrom, $userTo) {
+                $query->where([
+                    'sender_id' => $userFrom->id,
+                    'receiver_id' => $userTo->id,
+                ]);
+            }
+        )->orWhere(
+            function ($query) use ($userFrom, $userTo) {
+                $query->where([
+                    'sender_id' => $userTo->id,
+                    'receiver_id' => $userFrom->id,
+                ]);
+            }
+        )->orderBy('created_at', 'ASC')->get();
+
+        return $messages;
     }
 
     /**
@@ -28,7 +49,13 @@ class MessageController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $message = Message::create([
+            'message' => $request->message,
+            'sender_id' => auth()->user()->id,
+            'receiver_id' => $request->receiverId,
+        ]);
+
+        return 201;
     }
 
     /**

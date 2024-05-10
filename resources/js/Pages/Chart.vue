@@ -1,5 +1,31 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
+import Services from '@/Services';
+import { onMounted, reactive } from 'vue';
+
+const state = reactive({
+    users: []
+});
+
+onMounted(async () => {
+    try {
+        const { data } = await Services.users.getUsers();
+        state.users = data;
+        console.log(state.users);
+    } catch (error) {
+        console.error(error);
+    }
+
+});
+
+const getMessages = async (userId) => {
+    try {
+        const {data} = await Services.messages.getMessages(userId);
+        console.log(data);
+    } catch (error) {
+        console.error(error);
+    }
+}
 
 function handleSubmit() {
     console.log('Enviando!');
@@ -20,69 +46,15 @@ function handleSubmit() {
                     style="min-height: 450px; max-height: 450px;">
                     <div class="w-3/12 bg-gray-200 bg-opacity-25 border-r border-gray-200 overflow-y-scroll">
                         <ul>
-                            <li
+                            <li v-for="user in state.users" :key="user.id"
+                                @click="getMessages(user.id)"
                                 class="p-6 text-lg text-gray-600 leading-7 font-semibold border-b border-gray-200 hover:bg-opacity-50 hover:cursor-pointer hover:bg-gray-200">
                                 <p class="flex items-center">
-                                    Welen S. Almeida
+                                    {{ user.name }}
                                     <span class="ml-2 w-2 h-2 bg-blue-500 rounded-full" />
                                 </p>
                             </li>
-                            <li
-                                class="p-6 text-lg text-gray-600 leading-7 font-semibold border-b border-gray-200 hover:bg-opacity-50 hover:cursor-pointer hover:bg-gray-200">
-                                <p class="flex items-center">
-                                    Welen S. Almeida
-                                    <span class="ml-2 w-2 h-2 bg-blue-500 rounded-full" />
 
-                                </p>
-                            </li>
-                            <li
-                                class="p-6 text-lg text-gray-600 leading-7 font-semibold border-b border-gray-200 hover:bg-opacity-50 hover:cursor-pointer hover:bg-gray-200">
-                                <p class="flex items-center">
-                                    Welen S. Almeida
-                                    <span class="ml-2 w-2 h-2 bg-blue-500 rounded-full" />
-
-                                </p>
-                            </li>
-                            <li
-                                class="p-6 text-lg text-gray-600 leading-7 font-semibold border-b border-gray-200 hover:bg-opacity-50 hover:cursor-pointer hover:bg-gray-200">
-                                <p class="flex items-center">
-                                    Welen S. Almeida
-                                    <span class="ml-2 w-2 h-2 bg-blue-500 rounded-full" />
-
-                                </p>
-                            </li>
-                            <li
-                                class="p-6 text-lg text-gray-600 leading-7 font-semibold border-b border-gray-200 hover:bg-opacity-50 hover:cursor-pointer hover:bg-gray-200">
-                                <p class="flex items-center">
-                                    Welen S. Almeida
-                                    <span class="ml-2 w-2 h-2 bg-blue-500 rounded-full" />
-
-                                </p>
-                            </li>
-                            <li
-                                class="p-6 text-lg text-gray-600 leading-7 font-semibold border-b border-gray-200 hover:bg-opacity-50 hover:cursor-pointer hover:bg-gray-200">
-                                <p class="flex items-center">
-                                    Welen S. Almeida
-                                    <span class="ml-2 w-2 h-2 bg-blue-500 rounded-full" />
-
-                                </p>
-                            </li>
-                            <li
-                                class="p-6 text-lg text-gray-600 leading-7 font-semibold border-b border-gray-200 hover:bg-opacity-50 hover:cursor-pointer hover:bg-gray-200">
-                                <p class="flex items-center">
-                                    Welen S. Almeida
-                                    <span class="ml-2 w-2 h-2 bg-blue-500 rounded-full" />
-
-                                </p>
-                            </li>
-                            <li
-                                class="p-6 text-lg text-gray-600 leading-7 font-semibold border-b border-gray-200 hover:bg-opacity-50 hover:cursor-pointer hover:bg-gray-200">
-                                <p class="flex items-center">
-                                    Welen S. Almeida
-                                    <span class="ml-2 w-2 h-2 bg-blue-500 rounded-full" />
-
-                                </p>
-                            </li>
                         </ul>
                     </div>
 
