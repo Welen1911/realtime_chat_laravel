@@ -31,7 +31,7 @@ class MessageController extends Controller
                     'receiver_id' => $userFrom->id,
                 ]);
             }
-        )->orderBy('created_at', 'ASC')->get();
+        )->orderBy('created_at', 'asc')->get();
 
         return $messages;
     }
@@ -52,10 +52,10 @@ class MessageController extends Controller
         $message = Message::create([
             'message' => $request->message,
             'sender_id' => auth()->user()->id,
-            'receiver_id' => $request->receiverId,
+            'receiver_id' => $request->receiver_id,
         ]);
 
-        return 201;
+        return $message;
     }
 
     /**

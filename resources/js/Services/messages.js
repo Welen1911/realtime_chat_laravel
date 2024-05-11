@@ -4,4 +4,11 @@ export default (httpClient) => ({
 
         return response;
     },
+    storeMessages: async (createMessage) => {
+        const response = await httpClient.post('/messages', {
+            ...createMessage
+        });
+
+        return response;
+    }
 });
