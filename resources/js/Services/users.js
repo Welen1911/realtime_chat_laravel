@@ -4,4 +4,9 @@ export default (httpClient) => ({
 
         return response;
     },
+    getCurrentUser: async (userId) => {
+        const response = await httpClient.get(`/user/${userId}`);
+
+        return response;
+    }
 });

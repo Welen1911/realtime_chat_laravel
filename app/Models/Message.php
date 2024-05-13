@@ -15,7 +15,14 @@ class Message extends Model
         'receiver_id',
     ];
 
-    public function sender() {
+    public function sender()
+    {
         return $this->belongsTo(User::class);
     }
+
+    protected $casts = [
+        'properties' => 'collection',
+        'created_at' => 'datetime:d/m/Y H:i:s',
+    ];
+    protected $dates = ['created_at'];
 }
