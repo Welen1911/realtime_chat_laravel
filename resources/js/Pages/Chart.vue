@@ -30,9 +30,13 @@ const getMessages = async (userId) => {
         state.currentUser = userId;
 
         const { data } = await Services.messages.getMessages(userId);
+
         state.messages = data;
         console.log(state.messages);
+
         state.createMessage.receiver_id = userId;
+
+        scrollToBottom();
     } catch (error) {
         console.error(error);
     }
@@ -48,10 +52,18 @@ const handleSubmit = async (sender_id) => {
             state.messages.push(data);
 
             state.createMessage.message = '';
+
+            scrollToBottom();
         }
 
     } catch (error) {
         console.error(error);
+    }
+}
+
+const scrollToBottom = () => {
+    if (state.messages.length) {
+        document.querySelector('.message').scrollToBottom;
     }
 }
 </script>
@@ -68,10 +80,10 @@ const handleSubmit = async (sender_id) => {
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="flex bg-white overflow-hidden shadow-xl sm:rounded-lg"
                     style="min-height: 450px; max-height: 450px;">
-                    <div class="w-3/12 bg-gray-200 bg-opacity-25 border-r border-gray-200 overflow-y-scroll">
+                    <div class="w-3/12 bg-gray-200 bg-opacity-25 border-r border-gray-200 overflow-y-scroll message">
                         <ul>
                             <li v-for="user in state.users" :key="user.id" @click="getMessages(user.id)"
-                                :class="state.currentUser != '' && state.currentUser == user.id ? 'bg-gray-300 bg-opacity-50': ''"
+                                :class="state.currentUser != '' && state.currentUser == user.id ? 'bg-gray-300 bg-opacity-50' : ''"
                                 class="p-6 text-lg text-gray-600 leading-7 font-semibold border-b border-gray-200 hover:bg-opacity-50 hover:cursor-pointer hover:bg-gray-200">
                                 <p class="flex items-center">
                                     {{ user.name }}
@@ -82,12 +94,10 @@ const handleSubmit = async (sender_id) => {
                         </ul>
                     </div>
 
-                    <div
-                    v-if="state.currentUser != ''"
-                    class="flex flex-col justify-between w-9/12">
+                    <div v-if="state.currentUser != ''" class="flex flex-col justify-between w-9/12">
                         <div class="w-full p-6 flex flex-col overflow-y-scroll">
 
-                            <div v-for="message in state.messages" :key="message.id" class="w-full mb-3"
+                            <div v-for="message in state.messages" :key="message.id" class="w-full mb-3 message"
                                 :class="$attrs.auth.user.id == message.sender_id ? 'text-right' : ''">
                                 <p class="inline-block p-2 rounded-md"
                                     :class="$attrs.auth.user.id == message.sender_id ? 'msg-me' : 'msg-other'"
@@ -98,8 +108,7 @@ const handleSubmit = async (sender_id) => {
                             </div>
                         </div>
                         <div class="w-full bg-gray-200 bg-opacity-25 p-6 border-t border-gray-200">
-                            <form
-                            @submit.prevent="handleSubmit($attrs.auth.user.id)">
+                            <form @submit.prevent="handleSubmit($attrs.auth.user.id)">
                                 <div class="flex rounded-sm overflow-hidden border border-gray-300">
                                     <input type="text" class="flex-1 px-4 py-2 text-sm focus:outline-none"
                                         v-model="state.createMessage.message">
