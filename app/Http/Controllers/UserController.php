@@ -12,4 +12,11 @@ class UserController extends Controller
         $users = User::where('id', '<>', auth()->user()->id)->get();
         return $users;
     }
+
+    public function me()
+    {
+        $user = auth()->user();
+
+        return $user;
+    }
 }

@@ -1,6 +1,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Services from '@/Services';
+import store from '@/store';
 import { onMounted, reactive } from 'vue';
 
 const state = reactive({
@@ -16,6 +17,9 @@ const state = reactive({
 
 onMounted(async () => {
     try {
+
+        console.log('User salvo no store:', store.state.user);
+
         const { data } = await Services.users.getUsers();
         state.users = data;
         console.log(state.users);
@@ -45,7 +49,7 @@ const getMessages = async (userId) => {
 const handleSubmit = async (sender_id) => {
     try {
         if (state.createMessage.message != '') {
-            state.createMessage.sender_id = sender_id;
+            state.createMessage.sender_id = store.state.user.id;
 
             const { data } = await Services.messages.storeMessages(state.createMessage);
 

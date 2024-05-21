@@ -19,6 +19,8 @@
         "vue": "^3.3.13"
     },
     "dependencies": {
-        "moment": "^2.30.1"
+        "moment": "^2.30.1",
+        "vuex": "^4.0.2",
+        "vuex-persistedstate": "^4.1.0"
     }
 }
