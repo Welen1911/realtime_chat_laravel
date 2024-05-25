@@ -30,23 +30,20 @@ onMounted(async () => {
         console.log("Users: ", state.users);
 
         window.Echo.private(`chat.${store.state.user.id}`)
-            .listen('MessageSent', async (e) => {
+            .listen('MessageSent', (e) => {
                 console.log(e);
                 if (state.currentUser != ''
-                    // && state.currentUser == e.message.receiver_id
-                    // && store.state.user.id == e.message.sender_id
-                    // || state.currentUser == e.message.sender_id
                     && state.currentUser == e.message.sender_id
-                    // && store.state.user.id == e.message.receiver_id
                 ) {
                     state.messages.push(e.message);
+                    scrollToBottom();
                 } else {
                     state.users = state.users.map(user => {
-                        if (state.currentUser == user.id) {
-                            return { ...user, notification: false }
+                        if (e.message.sender_id == user.id) {
+                            return { ...user, notification: true }
                         }
 
-                        return { ...user, notification: true }
+                        return { ...user, notification: false }
                     });
 
                     console.log("Users dps do map: ", state.users);
