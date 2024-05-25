@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MessageSent;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -54,6 +55,8 @@ class MessageController extends Controller
             'sender_id' => auth()->user()->id,
             'receiver_id' => $request->receiver_id,
         ]);
+
+        MessageSent::dispatch($message, $message->receiver_id);
 
         return $message;
     }
