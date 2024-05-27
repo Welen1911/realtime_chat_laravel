@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\ConversaController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\web\PageController;

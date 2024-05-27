@@ -2,6 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Services from '@/Services';
 import store from '@/store';
+import Echo from 'laravel-echo';
 import { onMounted, reactive } from 'vue';
 
 const state = reactive({
@@ -23,6 +24,32 @@ onMounted(async () => {
         const { data } = await Services.users.getUsers();
         state.users = data;
         console.log(state.users);
+
+        state.createMessage.sender_id = store.state.user.id;
+
+        console.log("Users: ", state.users);
+
+        window.Echo.private(`chat.${store.state.user.id}`)
+            .listen('MessageSent', (e) => {
+                console.log(e);
+                if (state.currentUser != ''
+                    && state.currentUser == e.message.sender_id
+                ) {
+                    state.messages.push(e.message);
+                    scrollToBottom();
+                } else {
+                    state.users = state.users.map(user => {
+                        if (e.message.sender_id == user.id) {
+                            return { ...user, notification: true }
+                        }
+
+                        return { ...user, notification: false }
+                    });
+
+                    console.log("Users dps do map: ", state.users);
+                }
+            });
+
     } catch (error) {
         console.error(error);
     }
@@ -40,6 +67,16 @@ const getMessages = async (userId) => {
 
         state.createMessage.receiver_id = userId;
 
+        state.users = state.users.map(user => {
+            if (state.currentUser == user.id) {
+                return { ...user, notification: false }
+            }
+
+            return { ...user }
+        });
+
+        console.log("Users dps do getMessages: ", state.users);
+
         scrollToBottom();
     } catch (error) {
         console.error(error);
@@ -49,13 +86,13 @@ const getMessages = async (userId) => {
 const handleSubmit = async (sender_id) => {
     try {
         if (state.createMessage.message != '') {
-            state.createMessage.sender_id = store.state.user.id;
 
             const { data } = await Services.messages.storeMessages(state.createMessage);
 
-            state.messages.push(data);
 
             state.createMessage.message = '';
+
+            state.messages.push(data);
 
             scrollToBottom();
         }
@@ -91,7 +128,7 @@ const scrollToBottom = () => {
                                 class="p-6 text-lg text-gray-600 leading-7 font-semibold border-b border-gray-200 hover:bg-opacity-50 hover:cursor-pointer hover:bg-gray-200">
                                 <p class="flex items-center">
                                     {{ user.name }}
-                                    <span class="ml-2 w-2 h-2 bg-blue-500 rounded-full" />
+                                    <span v-if="user.notification" class="ml-2 w-2 h-2 bg-blue-500 rounded-full" />
                                 </p>
                             </li>
 
